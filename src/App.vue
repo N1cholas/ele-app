@@ -13,9 +13,6 @@
       </div>
     </section>
     <router-view></router-view>
-    <section class="footer">
-      I'm a footer!
-    </section>
   </div>
 </template>
 
