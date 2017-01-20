@@ -2,7 +2,7 @@
   <div class="goods">
     <div class="menu-warpper" ref="menuWarpper">
       <ul>
-        <li v-for="item in goods" class="menu-items">
+        <li @click="selectMenu(index, $event)" v-for="(item, index) in goods" class="menu-items" :class="{'current':currentIndex === index}">
           <span class="text border-1px">
             <span v-show="item.type>0" :class="classMap[item.type]" class="icon"></span>{{item.name}}
           </span>
@@ -11,7 +11,7 @@
     </div>
     <div class="foods-warpper" ref="foodsWarpper">
       <ul>
-        <li v-for="item in goods" class="food-list">
+        <li v-for="item in goods" class="food-list food-list-hook">
           <h1 v-text="item.name" class="title"></h1>
           <ul>
             <li v-for="food in item.foods" class="food-items border-1px">
@@ -29,21 +29,30 @@
                   <span class="now">￥{{food.price}}</span><!-- 
                --><span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
                 </div>
+                <div class="cartcontrol-warpper">
+                  <cartcontrol :food="food"></cartcontrol>
+                </div>
               </div>
             </li>
           </ul>
         </li>
       </ul>
     </div>
+    <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
   </div>
 </template>
 
 <script>
   import BScroll from 'better-scroll'
+  import shopcart from '../shopcart/shopcart.vue'
+  import cartcontrol from '../cartcontrol/cartcontrol.vue'
 
   const ERR_OK = 0
 
   export default {
+    components: {
+      shopcart, cartcontrol
+    },
     props: {
       seller: {
         type: Object
@@ -51,7 +60,21 @@
     },
     data () {
       return {
-        goods: {}
+        goods: {},
+        listHeight: [],
+        scrollY: 0
+      }
+    },
+    computed: {
+      currentIndex () {
+        for (let i = 0; i < this.listHeight.length; i++) {
+          let height1 = this.listHeight[i]
+          let height2 = this.listHeight[i + 1]
+          if (!height2 || this.scrollY >= height1 && this.scrollY < height2) {
+            return i
+          }
+        }
+        return 0
       }
     },
     created () {
@@ -63,16 +86,43 @@
           this.goods = res.data
           this.$nextTick(() => {
             this._initScroll()
+            this._calculateHeight()
           })
-          // this._initScroll()
         }
       })
     },
     methods: {
       _initScroll () {
-        this.menuScroll = new BScroll(this.$refs.menuWarpper, {})
+        this.menuScroll = new BScroll(this.$refs.menuWarpper, {
+          click: true
+        })
 
-        this.foodsScroll = new BScroll(this.$refs.foodsWarpper, {})
+        this.foodsScroll = new BScroll(this.$refs.foodsWarpper, {
+          click: true,
+          probeType: 3
+        })
+
+        this.foodsScroll.on('scroll', (pos) => {
+          this.scrollY = Math.abs(Math.round(pos.y))
+        })
+      },
+      _calculateHeight () {
+        let foodList = this.$refs.foodsWarpper.getElementsByClassName('food-list-hook')
+        let height = 0
+        this.listHeight.push(height)
+        for (let i = 0; i < foodList.length; i++) {
+          let item = foodList[i]
+          height += item.clientHeight
+          this.listHeight.push(height)
+        }
+      },
+      selectMenu (index, event) {
+        if (!event._constructed) {
+          return
+        }
+        let foodList = this.$refs.foodsWarpper.getElementsByClassName('food-list-hook')
+        let el = foodList[index]
+        this.foodsScroll.scrollToElement(el, 300)
       }
     }
   }
@@ -270,6 +320,11 @@
     line-height: 24px;
   }
 
+  .foods-warpper .food-items .content .cartcontrol-warpper {
+    position: absolute;
+    right: 0; bottom: 12px;
+  }
+
   .foods-warpper .food-items .content .price .now {
     margin-right: 8px;
     font-size: 14px;
@@ -280,5 +335,17 @@
     text-decoration: line-through;
     font-size: 10px;
     color: rgb(147, 153, 159) !important;
+  }
+
+  .current {
+    position: relative;
+    margin-top: -1px;
+    z-index: 10;
+    background-color: #fff;
+    font-weight: 700;
+  }
+
+  .current .text::after {
+    border-top: none;
   }
 </style>
