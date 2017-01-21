@@ -30,7 +30,7 @@
                --><span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
                 </div>
                 <div class="cartcontrol-warpper">
-                  <cartcontrol :food="food"></cartcontrol>
+                  <cartcontrol v-on:cart_add="_drop" :food="food"></cartcontrol>
                 </div>
               </div>
             </li>
@@ -38,7 +38,7 @@
         </li>
       </ul>
     </div>
-    <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+    <shopcart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
   </div>
 </template>
 
@@ -60,7 +60,7 @@
     },
     data () {
       return {
-        goods: {},
+        goods: [],
         listHeight: [],
         scrollY: 0
       }
@@ -75,6 +75,17 @@
           }
         }
         return 0
+      },
+      selectFoods () {
+        let foods = []
+        this.goods.forEach(good => {
+          good.foods.forEach(food => {
+            if (food.count) {
+              foods.push(food)
+            }
+          })
+        })
+        return foods
       }
     },
     created () {
@@ -115,6 +126,9 @@
           height += item.clientHeight
           this.listHeight.push(height)
         }
+      },
+      _drop (target) {
+        this.$refs.shopcart.drop(target)
       },
       selectMenu (index, event) {
         if (!event._constructed) {
