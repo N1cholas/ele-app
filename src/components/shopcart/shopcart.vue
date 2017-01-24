@@ -16,15 +16,6 @@
           <div v-text="payDesc" :class="payClass" class="pay"></div>
         </div>
       </div>
-      <!-- <div class="ball-container">
-        <transition-group name="drop" v-on:before-enter="beforeEnter"
-                                v-on:enter="enter"
-                                v-on:after-enter="afterEnter">
-          <div v-for="ball in balls" v-show="ball.show" :key="ball.show" class="ball">
-            <div class="inner inner-hook"></div>
-          </div>
-        </transition-group>
-      </div> -->
       <transition name="fold">
         <div v-show="listShow" class="shopcart-list">
           <div class="list-header">
