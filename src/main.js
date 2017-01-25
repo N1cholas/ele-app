@@ -30,4 +30,4 @@ new Vue({
   ...App
 }).$mount('#app')
 
-router.push('/goods')
+// router.push('/goods')
