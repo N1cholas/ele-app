@@ -1,10 +1,20 @@
-# ele-app
+# high-imitation-ele-app
 
-> A ele app
+> Best practice of Vue2.0
+
+## Plug ins
+
+```
+vue-resource: 1.0.3
+
+vue-router: 2.1.1
+
+better-scroll: 0.1.7
+```
 
 ## Build Setup
 
-``` bash
+```
 # install dependencies
 npm install
 
@@ -15,4 +25,4 @@ npm run dev
 npm run build
 ```
 
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
