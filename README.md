@@ -1,8 +1,8 @@
-# 高仿饿了么APP
+# high-imitation
 
 > Vue2.0的最佳实践
 
-## 涉及的插件
+## Plug ins
 
 ```
 vue-resource: 1.0.3
